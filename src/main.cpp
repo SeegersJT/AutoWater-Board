@@ -10,6 +10,12 @@ LiquidCrystal_I2C lcd(LCD_ADDR, LCD_COLUMNS, LCD_ROWS);
 RelayDevice relay(RELAY_PIN_R01, "RELAY 01");
 MoistureDevice moistureMeter(MOISTURE_METER_PIN_MM01, "MOISTURE METER 01");
 
+void displayMessage(const char* message) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print(message);
+}
+
 // =========================================================
 // START UP
 // =========================================================
@@ -96,18 +102,13 @@ void displayMoistureMeterData(const MoistureDevice& moistureDevice) {
   Serial.print("Connecting to WiFi ..");
 }
 
-void displayMessage(const char* message) {
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print(message);
-}
-
 // =========================================================
 // CONNECTORS - Logic to control relay based on moisture meter
 // =========================================================
 
 void connectRelayToMoistureMeter(RelayDevice& relayDevice, MoistureDevice& moistureDevice) {
-  
+  moistureDevice.updateState();
+
   if (moistureDevice.getMoisturePercentage() < MOISTURE_METERS_THRESHOLD) {
     relayDevice.setState("ON");
   } else {
@@ -117,7 +118,7 @@ void connectRelayToMoistureMeter(RelayDevice& relayDevice, MoistureDevice& moist
   outputMoistureMeterData(moistureDevice);
   outputRelayState(relayDevice);
 
-  displayMoistureMeter(moistureDevice);
+  displayMoistureMeterData(moistureDevice);
 }
 
 // =========================================================
@@ -125,18 +126,18 @@ void connectRelayToMoistureMeter(RelayDevice& relayDevice, MoistureDevice& moist
 // =========================================================
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
 
-  lcd.begin();
-  lcd.backlight();
+  // lcd.begin(LCD_COLUMNS, LCD_ROWS);
+  // lcd.backlight();
 
-  displayMessage("Starting...");
-  delay(5000);
+  // displayMessage("Starting...");
+  // delay(5000);
 
-  connectToWiFi();
+  // connectToWiFi();
 
-  relay.setup();
-  moistureMeter.setup();
+  // relay.setup();
+  // moistureMeter.setup();
 }
 
 // =========================================================
@@ -144,7 +145,9 @@ void setup() {
 // =========================================================
 
 void loop() {
-  connectRelayToMoistureMeter(relay, moistureMeter);
+  Serial.print("MOISTURE METER - ");
+  Serial.print(" : ");
+  Serial.println("%");
 
   delay(1000);
 }
