@@ -13,36 +13,52 @@ MoistureDevice moistureMeter(MOISTURE_METER_PIN_MM01, "MOISTURE METER 01");
 // =========================================================
 // START UP
 // =========================================================
+
 void connectToWiFi() {
+  displayMessage("Connecting to WiFi...");
+
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   
-  Serial.print("Connecting to WiFi ..");
+  
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
+
     Serial.print('.');
+
+    lcd.setCursor(0, 1);
+    lcd.print("Connecting...");
   }
 
   Serial.println("\nConnected to the WiFi network");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Connected to WiFi");
+  lcd.setCursor(0, 1);
+  lcd.print(WiFi.localIP().toString());
+
   configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+
+  delay(2000);
 }
 
 // =========================================================
 // OUTPUTS - Serial print terminal data.
 // =========================================================
-void outputMoistureMeterData(const MoistureDevice& moistureDevice) {
-  int moisturePercentage = moistureDevice.getMoisturePercentage();
 
+void outputMoistureMeterData(const MoistureDevice& moistureDevice) {
+  // "MOISTURE METER - [DEVICE_NAME] : [PERCENTAGE]%"
   Serial.print("MOISTURE METER - ");
   Serial.print(moistureDevice.name);
   Serial.print(" : ");
-  Serial.print(moisturePercentage);
+  Serial.print(moistureDevice.getMoisturePercentage());
   Serial.println("%");
 }
 
 void outputRelayState(const RelayDevice& relayDevice) {
+  // "RELAY - [DEVICE_NAME] : [STATE]"
   Serial.print("RELAY - ");
   Serial.print(relayDevice.name);
   Serial.print(" : ");
@@ -52,7 +68,8 @@ void outputRelayState(const RelayDevice& relayDevice) {
 // =========================================================
 // LCD DISPLAY - Show the moisture meter percentage and date/time.
 // =========================================================
-void displayMoistureOnLCD(const MoistureDevice& moistureDevice) {
+
+void displayMoistureMeterData(const MoistureDevice& moistureDevice) {
   // Get current time
   struct tm timeinfo;
   if (!getLocalTime(&timeinfo)) {
@@ -71,46 +88,61 @@ void displayMoistureOnLCD(const MoistureDevice& moistureDevice) {
   lcd.setCursor(0, 1);
   lcd.print(moistureDevice.name);
   lcd.print(" : ");
+  lcd.print(moistureDevice.name);
+  lcd.print(" : ");
   lcd.print(moistureDevice.getMoisturePercentage());
   lcd.print("%");
+
+  Serial.print("Connecting to WiFi ..");
+}
+
+void displayMessage(const char* message) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print(message);
 }
 
 // =========================================================
 // CONNECTORS - Logic to control relay based on moisture meter
 // =========================================================
+
 void connectRelayToMoistureMeter(RelayDevice& relayDevice, MoistureDevice& moistureDevice) {
-  moistureDevice.updateState();
-
-  outputMoistureMeterData(moistureDevice);
-
+  
   if (moistureDevice.getMoisturePercentage() < MOISTURE_METERS_THRESHOLD) {
     relayDevice.setState("ON");
   } else {
     relayDevice.setState("OFF");
   }
 
+  outputMoistureMeterData(moistureDevice);
   outputRelayState(relayDevice);
-  displayMoistureOnLCD(moistureDevice);
+
+  displayMoistureMeter(moistureDevice);
 }
 
 // =========================================================
 // SETUP - Executed code at the start of the run
 // =========================================================
+
 void setup() {
   Serial.begin(115200);
+
+  lcd.begin();
+  lcd.backlight();
+
+  displayMessage("Starting...");
+  delay(5000);
 
   connectToWiFi();
 
   relay.setup();
   moistureMeter.setup();
-
-  lcd.begin();
-  lcd.backlight();
 }
 
 // =========================================================
 // LOOP - Executed code in a loop
 // =========================================================
+
 void loop() {
   connectRelayToMoistureMeter(relay, moistureMeter);
 
