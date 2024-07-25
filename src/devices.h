@@ -65,6 +65,7 @@ class MoistureDevice : public Device {
         }
 
         int getMoisturePercentage() const {
+            updateState();
             return moisturePercentage;
         }
 };
