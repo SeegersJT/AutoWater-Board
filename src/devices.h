@@ -58,7 +58,7 @@ class MoistureDevice : public Device {
 
         void updateState() override {
             int sensorValue = analogRead(pin);
-            moisturePercentage = map(sensorValue, MOISTURE_METERS_MIN, MOISTURE_METERS_MAX, 0, 100);
+            moisturePercentage = map(sensorValue, MOISTURE_METERS_MIN, MOISTURE_METERS_MAX, 100, 00);
 
             if (moisturePercentage < 0) moisturePercentage = 0;
             if (moisturePercentage > 100) moisturePercentage = 100;

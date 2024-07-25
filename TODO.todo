@@ -1,0 +1,7 @@
+- [] Check moisture level every 5 minutes, and dispense water for [0.5 / 1] second(s)
+- [] Refactor devices and moisture reading
+- [] API access
+  - [] Configure poll rate
+  - [] Configure water dispense rate
+- [] Config INI file, which will be read on startup and written to with config changing API calls
+- [] Push each moisture level reading to a DB
