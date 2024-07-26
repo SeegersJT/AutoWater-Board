@@ -1,86 +1,76 @@
 #include <Arduino.h>
-#include <WiFi.h>
-#include <Wire.h>
-#include <string>
-#include "secrets.h"
-#include "config.h"
-#include "devices.h"
-#include "display.cpp"
+#include "wifi_manager.h"
+#include "config_manager.h"
+#include "device_wrapper.h"
+#include "display_wrapper.h"
 
 using display = DisplayWrapper;
 
-MoistureDevice moistureMeter(MOISTURE_METER_PIN_MM01, "MOISTURE METER 01");
-RelayDevice relay(RELAY_PIN_R01, "RELAY 01");
+DeviceWrapper<MoistureDevice>* moistureSensor_MM01;
+DeviceWrapper<RelayDevice>* relay_R01;
+
+void listSPIFFSFiles() {
+    Serial.println("Listing SPIFFS files:");
+    File root = SPIFFS.open("/");
+    File file = root.openNextFile();
+    while (file) {
+        Serial.print("FILE: ");
+        Serial.print(file.name());
+        Serial.print(" - SIZE: ");
+        Serial.println(file.size());
+        file = root.openNextFile();
+    }
+}
 
 // =========================================================
 // START UP
 // =========================================================
 
 void startDisplay() {
-  display::init();
-  display("Starting...").print();
-  delay(5000);
-}
-
-void connectToWiFi() {
-  display("Connecting WiFi").clear().print();
-
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    display("Connecting...").bottom().print();
-  }
-
-  display("Connected").clear().print();
-  display(WiFi.localIP().toString().c_str()).bottom().print();
-
-  delay(2000);
+    display::init();
+    display("Starting...").print();
+    delay(5000);
 }
 
 void setupDevices() {
-  moistureMeter.setup();
-  relay.setup();
+    display("Device Setup").clear().print();
+    display("Initiating...").bottom().print();
+    delay(2000);
+
+    moistureSensor_MM01 = new DeviceWrapper<MoistureDevice>(MOISTURE_SENSOR_PIN_MM01, "MOISTURE SENSOR 01");
+    relay_R01 = new DeviceWrapper<RelayDevice>(RELAY_PIN_R01, "RELAY 01");
+
+    moistureSensor_MM01->setup();
+    relay_R01->setup();
+
+    display("Device Setup").clear().print();
+    display("Successfull").bottom().print();
+    delay(2000);
 }
 
 // =========================================================
-// OUTPUTS - Serial print terminal data.
+// CONNECTORS - Logic to control relay based on moisture sensor
 // =========================================================
 
-void outputMoistureMeterData(const MoistureDevice& moistureDevice) {
-  // "MOISTURE METER - [DEVICE_NAME] : [PERCENTAGE]%"
-  Serial.print("MOISTURE METER - ");
-  Serial.print(moistureDevice.name);
-  Serial.print(" : ");
-  Serial.print(moistureDevice.getMoisturePercentage());
-  Serial.println("%");
-}
+void connectRelayToMoistureSensor(DeviceWrapper<RelayDevice>& relayDevice, DeviceWrapper<MoistureDevice>& moistureDevice) {
+    unsigned long currentMillis = millis();
 
-void outputRelayState(const RelayDevice& relayDevice) {
-  // "RELAY - [DEVICE_NAME] : [STATE]"
-  Serial.print("RELAY - ");
-  Serial.print(relayDevice.name);
-  Serial.print(" : ");
-  Serial.println(relayDevice.getState());
-}
+    if (currentMillis - moistureDevice.getTimestamp() >= MOISTURE_SENSORS_CHECK_INTERVAL) {
+        int moisturePercentage = moistureDevice.getMoisturePercentage();
 
-// =========================================================
-// CONNECTORS - Logic to control relay based on moisture meter
-// =========================================================
+        if (moisturePercentage < ACTIVATE_RELAY_THRESHOLD) {
+            relayDevice.setState("ON");
+        } else {
+            relayDevice.setState("OFF");
+        }
 
-void connectRelayToMoistureMeter(RelayDevice& relayDevice, MoistureDevice& moistureDevice) {
-  moistureDevice.updateState();
+        display("Moisture: " + String(moisturePercentage) + "%").clear().print();
+        display("Relay: " + String(relayDevice.getState())).bottom().print();
+    }
 
-  int moisturePercentage = moistureDevice.getMoisturePercentage();
-
-  if (moisturePercentage < MOISTURE_METERS_THRESHOLD) {
-    relayDevice.setState("ON");
-  } else {
-    relayDevice.setState("OFF");
-  }
-
-  display("Moisture: " + String(moisturePercentage) + "%").print();
-  display("Relay: " + String(relayDevice.getState())).bottom().print();
+    if (relayDevice.getState() == "ON" && currentMillis - moistureDevice.getTimestamp() >= RELAY_ON_DURATION) {
+        relayDevice.setState("OFF");
+    }
 }
 
 // =========================================================
@@ -88,11 +78,22 @@ void connectRelayToMoistureMeter(RelayDevice& relayDevice, MoistureDevice& moist
 // =========================================================
 
 void setup() {
-  Serial.begin(9600);
+    Serial.begin(9600);
 
-  startDisplay();
-  connectToWiFi();
-  setupDevices();
+    startDisplay();
+
+    if (!SPIFFS.begin(true)) {
+        Serial.println("An error has occurred while mounting SPIFFS");
+        return;
+    }
+
+    listSPIFFSFiles();
+
+    readConfig();
+
+    setupDevices();
+
+    WiFiManager::connectToWiFi();
 }
 
 // =========================================================
@@ -100,7 +101,8 @@ void setup() {
 // =========================================================
 
 void loop() {
-  connectRelayToMoistureMeter(relay, moistureMeter);
+    connectRelayToMoistureSensor(*relay_R01, *moistureSensor_MM01);
 
-  delay(1000);
+    DisplayWrapper::checkBacklight();
+    delay(1000);
 }

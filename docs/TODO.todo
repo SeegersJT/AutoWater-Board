@@ -1,4 +1,5 @@
-- [] Check moisture level every 5 minutes, and dispense water for [0.5 / 1] second(s)
+- [*] Relay Switch Active Duration - Check moisture level every 5 minutes, and dispense water for [0.5 / 1] second(s)
+- [] WiFi Connection Error Handeling - Make sure the wifi connection does 
 - [] Refactor devices and moisture reading
 - [] API access
   - [] Configure poll rate
