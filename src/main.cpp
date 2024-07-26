@@ -9,6 +9,19 @@ using display = DisplayWrapper;
 DeviceWrapper<MoistureDevice>* moistureSensor_MM01;
 DeviceWrapper<RelayDevice>* relay_R01;
 
+void listSPIFFSFiles() {
+    Serial.println("Listing SPIFFS files:");
+    File root = SPIFFS.open("/");
+    File file = root.openNextFile();
+    while (file) {
+        Serial.print("FILE: ");
+        Serial.print(file.name());
+        Serial.print(" - SIZE: ");
+        Serial.println(file.size());
+        file = root.openNextFile();
+    }
+}
+
 // =========================================================
 // START UP
 // =========================================================
@@ -20,11 +33,19 @@ void startDisplay() {
 }
 
 void setupDevices() {
+    display("Device Setup").clear().print();
+    display("Initiating...").bottom().print();
+    delay(2000);
+
     moistureSensor_MM01 = new DeviceWrapper<MoistureDevice>(MOISTURE_SENSOR_PIN_MM01, "MOISTURE SENSOR 01");
     relay_R01 = new DeviceWrapper<RelayDevice>(RELAY_PIN_R01, "RELAY 01");
 
     moistureSensor_MM01->setup();
     relay_R01->setup();
+
+    display("Device Setup").clear().print();
+    display("Successfull").bottom().print();
+    delay(2000);
 }
 
 // =========================================================
@@ -43,7 +64,7 @@ void connectRelayToMoistureSensor(DeviceWrapper<RelayDevice>& relayDevice, Devic
             relayDevice.setState("OFF");
         }
 
-        display("Moisture: " + String(moisturePercentage) + "%").print();
+        display("Moisture: " + String(moisturePercentage) + "%").clear().print();
         display("Relay: " + String(relayDevice.getState())).bottom().print();
     }
 
@@ -61,8 +82,15 @@ void setup() {
 
     startDisplay();
 
+    if (!SPIFFS.begin(true)) {
+        Serial.println("An error has occurred while mounting SPIFFS");
+        return;
+    }
+
+    listSPIFFSFiles();
+
     readConfig();
-    
+
     setupDevices();
 
     WiFiManager::connectToWiFi();
@@ -75,5 +103,6 @@ void setup() {
 void loop() {
     connectRelayToMoistureSensor(*relay_R01, *moistureSensor_MM01);
 
+    DisplayWrapper::checkBacklight();
     delay(1000);
 }

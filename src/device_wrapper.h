@@ -15,7 +15,7 @@ public:
     Device(int pin, String name) {
         this->pin = pin;
         this->name = name;
-        this->timestamp = 0;
+        this->timestamp = millis();
     }
 
     virtual void setup() = 0;
