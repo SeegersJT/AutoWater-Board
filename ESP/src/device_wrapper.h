@@ -2,7 +2,7 @@
 #ifndef DEVICE_WRAPPER_H
 #define DEVICE_WRAPPER_H
 
-#include "config_manager.h"
+#include "globals.h"
 #include <string>
 
 // Base Device Class
@@ -43,7 +43,7 @@ class MoistureDevice : public Device {
 
         void updateState() override {
             int sensorValue = analogRead(pin);
-            moisturePercentage = map(sensorValue, MOISTURE_SENSORS_MIN, MOISTURE_SENSORS_MAX, 100, 0);
+            moisturePercentage = map(sensorValue, config["MOISTURE_SENSORS_MIN"], config["MOISTURE_SENSORS_MAX"], 100, 0);
 
             if (moisturePercentage < 0) moisturePercentage = 0;
             if (moisturePercentage > 100) moisturePercentage = 100;

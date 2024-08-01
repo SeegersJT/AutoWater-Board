@@ -4,20 +4,20 @@
 #include <LiquidCrystal_I2C.h>
 #include "config_manager.h"
 
-class DisplayWrapper {
+class display {
 public:
     bool shouldClear;
     int targetColumn;
     int targetRow;
     String message;
 
-    DisplayWrapper(String message);
+    display(String message);
 
-    DisplayWrapper& clear();
-    DisplayWrapper& row(int row);
-    DisplayWrapper& top();
-    DisplayWrapper& bottom();
-    DisplayWrapper& column(int column);
+    display& clear();
+    display& row(int row);
+    display& top();
+    display& bottom();
+    display& column(int column);
     void print();
 
     static void init();
