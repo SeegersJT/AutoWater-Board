@@ -2,6 +2,8 @@
 
 LiquidCrystal_I2C lcd_display(LCD_ADDR, LCD_COLUMNS, LCD_ROWS);
 
+unsigned long DisplayWrapper::lastDisplayTime = 0;
+
 DisplayWrapper::DisplayWrapper(String message)
     : message(message), shouldClear(false), targetColumn(0), targetRow(0) {}
 
@@ -35,6 +37,9 @@ void DisplayWrapper::print() {
 
     lcd_display.setCursor(this->targetColumn, this->targetRow);
     lcd_display.print(this->message);
+
+    DisplayWrapper::lastDisplayTime = millis();
+    DisplayWrapper::backlight();
 }
 
 void DisplayWrapper::init() {
@@ -51,5 +56,12 @@ void DisplayWrapper::backlight(bool enableBacklight) {
         lcd_display.backlight();
     } else {
         lcd_display.noBacklight();
+    }
+}
+
+void DisplayWrapper::checkBacklight() {
+    unsigned long currentTime = millis();
+    if (currentTime - lastDisplayTime > 15000) {
+        DisplayWrapper::backlight(false);
     }
 }

@@ -23,6 +23,8 @@ public:
     static void init();
     static void clearDisplay();
     static void backlight(bool enableBacklight = true);
+    static void checkBacklight();
+    static unsigned long lastDisplayTime;
 };
 
 #endif // DISPLAY_WRAPPER_H
