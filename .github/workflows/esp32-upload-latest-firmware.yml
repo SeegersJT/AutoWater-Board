@@ -21,7 +21,7 @@ jobs:
           auth_provider_x509_cert_url: ${secrets.FIREBASE_AUTH_PROVIDER_X509_CERT_URL}
           client_x509_cert_url: ${secrets.FIREBASE_CLIENT_X509_CERT_URL}
           database_default_url: ${secrets.FIREBASE_REALTIME_DATABASE_URL}
-          reference: "${vars.FIREBASE_FIRMWARE_REFERENCE}"
+          reference: ${vars.FIREBASE_FIRMWARE_REFERENCE}
           operation: get
       - name: Get the output
         run: echo "The object result is ${{ steps.testGet.outputs.RESULT }}"
@@ -38,6 +38,6 @@ jobs:
           auth_provider_x509_cert_url: ${secrets.FIREBASE_AUTH_PROVIDER_X509_CERT_URL}
           client_x509_cert_url: ${secrets.FIREBASE_CLIENT_X509_CERT_URL}
           database_default_url: ${secrets.FIREBASE_REALTIME_DATABASE_URL}
-          reference: "${vars.FIREBASE_FIRMWARE_REFERENCE}"
+          reference: ${vars.FIREBASE_FIRMWARE_REFERENCE}
           operation: set
-          data: "{ \"name\": \"Rafael de França Neves\", \"age\": 41 }"
+          data: "{ \"name\": \"Hanno\", \"age\": 29 }"
