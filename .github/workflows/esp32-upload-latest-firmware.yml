@@ -1,0 +1,43 @@
+name: Test Realtime Firebase
+on:
+  push:
+    branches:
+      - main
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: test get
+        uses: rafacolab/realtime-db-action@v1.0.0
+        id: testGet
+        with:
+          project_id: ${secrets.FIREBASE_PROJECT_ID}
+          private_key_id: ${secrets.FIREBASE_PRIVATE_KEY_ID}
+          private_key: ${secrets.FIREBASE_PRIVATE_KEY}
+          client_email: ${secrets.FIREBASE_CLIENT_EMAIL}
+          client_id: ${secrets.FIREBASE_CLIENT_ID}
+          auth_uri: ${secrets.FIREBASE_AUTH_URI}
+          token_uri: ${secrets.FIREBASE_TOKEN_URI}
+          auth_provider_x509_cert_url: ${secrets.FIREBASE_AUTH_PROVIDER_X509_CERT_URL}
+          client_x509_cert_url: ${secrets.FIREBASE_CLIENT_X509_CERT_URL}
+          database_default_url: ${secrets.FIREBASE_REALTIME_DATABASE_URL}
+          reference: "${vars.FIREBASE_FIRMWARE_REFERENCE}"
+          operation: get
+      - name: Get the output
+        run: echo "The object result is ${{ steps.testGet.outputs.RESULT }}"
+      - name: test set
+        uses: rafacolab/realtime-db-action@v1.0.0
+        with:
+          project_id: ${secrets.FIREBASE_PROJECT_ID}
+          private_key_id: ${secrets.FIREBASE_PRIVATE_KEY_ID}
+          private_key: ${secrets.FIREBASE_PRIVATE_KEY}
+          client_email: ${secrets.FIREBASE_CLIENT_EMAIL}
+          client_id: ${secrets.FIREBASE_CLIENT_ID}
+          auth_uri: ${secrets.FIREBASE_AUTH_URI}
+          token_uri: ${secrets.FIREBASE_TOKEN_URI}
+          auth_provider_x509_cert_url: ${secrets.FIREBASE_AUTH_PROVIDER_X509_CERT_URL}
+          client_x509_cert_url: ${secrets.FIREBASE_CLIENT_X509_CERT_URL}
+          database_default_url: ${secrets.FIREBASE_REALTIME_DATABASE_URL}
+          reference: "${vars.FIREBASE_FIRMWARE_REFERENCE}"
+          operation: set
+          data: "{ \"name\": \"Rafael de França Neves\", \"age\": 41 }"
