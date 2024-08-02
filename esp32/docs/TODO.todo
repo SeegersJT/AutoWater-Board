@@ -1,0 +1,46 @@
+Build:
+  Hosted web server (Firebase):
+    Front-end access:
+      ☐ L.E.E.F. account creation
+      Leeflet configuration:
+        ☐ Device name
+        ☐ Device poll rate
+        ☐ Device water dispense rate
+        ☐ Leeflet logs and stats
+    API access:
+      Leeflet configuration:
+        ☐ Configure device name
+        ☐ Configure poll rate
+        ☐ Configure water dispense rate
+
+  ESP32:
+    Wifi Connection:
+      ☐ WiFi Connection Error Handling - Make sure the wifi connection works
+    Config Manager:
+      ✔ Config INI files, which will be read on startup and written to with config changing API calls @done(24-08-01 20:00)
+      ✔ Save hardware config (SHOULD NOT IMPLEMENT) @done(24-08-01 20:00)
+      ✔ Save pin config (SHOULD NOT IMPLEMENT) @done(24-08-01 20:00)
+      ☐ Save wifi config
+    Local web server:
+        ☐ Sign in (connect) using L.E.E.F. account (defined in Firebase)
+        ☐ Link leeflet to the signed in account
+        ☐ Configure leeflet config from local web server
+        ☐ On startup, and every 15 minutes, pull config from server and apply settings locally
+    Firebase:
+      Firebae Class:
+        ☐ Create Firebase class to integrate with Firebase
+        ☐ Authenticate with Firebase
+        API (List of API calls needed):
+          ☐ empty
+    Firmware Updates OTA (Over The Air):
+      ☐ Create a class that programmatically reads the latest Firmware Version from the Firebase Storage
+      ☐ Check if read version is newer than current and auto flash yourself. (Might need to add a Version Global config)
+      ☐ Add custom Firmware file Save location and edit the file to have a unique identifier for version control (/version/[FILENAME]) -> ("__ LEEF FIRMWARE __ [DATE] [TIME] __")
+  
+  Github:
+    ☐ Add workflow folder structure
+    ☐ Create an Action in Github that saves the latest firmware.ino.bin file into the Firebase Storage (https://github.com/marketplace/actions/firebase-trigger)
+Refactor:
+  ☐ Devices and moisture reading
+  ☐ Finish timer class for dynamic time management
+  ☐ Fix Config Manager
