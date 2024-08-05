@@ -11,16 +11,16 @@ jobs:
         uses: rafacolab/realtime-db-action@v1.0.0
         id: testGet
         with:
-          project_id: "service_account"
-          private_key_id: "e3d819e65b3bccc425e6ae5b6af3e3e9108bb5e4"
-          private_key: "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDl40uC9/Ey+lAA\nTH2Sf/7Uln6OFjjqn0t0wCh5noCqQrNDA1P+hAnuPpqViYPzfol3yBvXNz3IYT7L\nMNynspTg3cPNr1W8xPVvtZ3VcVA8YlTyJYxhO1Jf0pVMqCmgP1ieuguYmEAprJcr\nfMxZTJym1R9ybxQp7i3We3nD9gEsaVF7VNJTO6zAxBgTxr76ONdm9wFTTmsTlGdZ\n8C6aVvK261hQa7VNOFx6D0T3I6VwFKENy9xsJGBQoJGSlyEJBODh1hbgKvqg/7si\nlIMG2AhPKbWA2jBf4w2Zr9k3AFwnWe1NLRqTxl7iOOGQsqMVoucN2Y05Tprw99vT\npquvTCtXAgMBAAECggEAFMrPkBtr0eAI71X7v43bFxA7hw9ke3gH45njr0hSO9QH\nkaaR6MG5gjZgVekXqaTGuzI6rmb9LAv7mXYkZviEdagpJwfWOdoYls925JC4oJWG\nOFaEEWFDrI4H2eSVyzwfgE+0b8tJdlt5WsIRW3xN6Nr62qdITBiSRcVqOHqeFY2P\nF2g0LxMvS7AcxdWNpFhHHq4nh2Et83BUpjSo6pA9yynAVMkjCyeTe3LsJl35T6sO\nYXFCLEK8aLrYazd76SntzJ1GOMit3lxs2siYNOtqno7+5+CS2XEUfoMlYO888Oki\nKb8vrzMTMWL1Az3WhqdD1ApXYzOP27RJbpPTYigvlQKBgQD9mGj3xFWIik7i4ncn\nS+iTXtlJm5ywF5IvveZO0MPWVXM2pZ1c1cyk/AxK+cBDUoDgGhILw7ypI/OaPWab\nm6ebHuRfizXDiL9Ra6b7PaAsDX4LnZGngGsz8hZaj4j2gKpedITS75boOeV8N/e6\nxGd5pWBi4iWt5jEkor5xjwchjQKBgQDoEVYSbp8JgZEQ6qPw05Et/Fthv9OIYknc\n+hF4V1sUdbN+kGtSV7yf43y4gORWJWvuiaCQ/0LeTgcdo2h87yyk0U0cMjeL1DIF\nmDOPn8YDhBbsgvlLpwufXibE5ZaKl6yuyhZ07fCxkX6AnJBrhkFNQzzKe0+TvQJP\nVBg7mF+9cwKBgQCRoekGAJYuJ19OJEfRJWKW3y1hfB/rcF3fVOrh8DnG6KOVil5o\nZc90H9rfY7Xp84NXLyGV5/58E81dkk1Op4EFMCRuSf/CHtHf7DakqatGISl1ejOf\nQbxOxIPZ1fwNs64jOD7e9ABxtG35fBqkAw55aWOE5eJFj6BBLcS4ai7qMQKBgGLs\n6PUIhPEHc3BzpZkGhw/EUKwVmrW7uGLjksjq7B+HoRFlvOooDndWARehkjSK1Tyl\nHHZS6g1b07q1qtf/GNfVhPptCbKorP4niGtEH6PmDeOaXWz7c3/nIb2zZP4FdA46\nhWIo//6h1/w5QXMkkve9ns9ty1leK/rnDUFyTfWzAoGAX5yN9Qy9S/9bUEhZM+EK\nDMUKc0M0hs+ZnM1IPnYBrj8PSS6Cdsm1CEsnvB1vKBXt6tTLuirzzC3i19FnLyRs\nX0iEPuvF18vmfTQbH422S3HJigk5iHXAv+gO/eo4AF4KMi5B/qjV1UBN7gPPACGv\nnlSEFKyjp/eZRqJ/cegfzhM=\n-----END PRIVATE KEY-----\n"
-          client_email: "firebase-adminsdk-v9zxg@leef-46909.iam.gserviceaccount.com"
-          client_id: "101740532640762789723"
-          auth_uri: "https://accounts.google.com/o/oauth2/auth"
-          token_uri: "https://oauth2.googleapis.com/token"
-          auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs"
-          client_x509_cert_url: "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-v9zxg%40leef-46909.iam.gserviceaccount.com"
-          database_default_url: "https://leef-46909-default-rtdb.firebaseio.com/"
+          project_id: ${{secrets.FIREBASE_PROJECT_ID}}
+          private_key_id: ${{secrets.FIREBASE_PRIVATE_KEY_ID}}
+          private_key: ${{secrets.FIREBASE_PRIVATE_KEY}}
+          client_email: ${{secrets.FIREBASE_CLIENT_EMAIL}}
+          client_id: ${{secrets.FIREBASE_CLIENT_ID}}
+          auth_uri: ${{secrets.FIREBASE_AUTH_URI}}
+          token_uri: ${{secrets.FIREBASE_TOKEN_URI}}
+          auth_provider_x509_cert_url: ${{secrets.FIREBASE_AUTH_PROVIDER_X509_CERT_URL}}
+          client_x509_cert_url: ${{secrets.FIREBASE_CLIENT_X509_CERT_URL}}
+          database_default_url: ${{secrets.FIREBASE_REALTIME_DATABASE_URL}}
           reference: 'firmware'
           operation: get
       - name: Get the output
@@ -28,16 +28,16 @@ jobs:
       - name: test set
         uses: rafacolab/realtime-db-action@v1.0.0
         with:
-          project_id: "service_account"
-          private_key_id: "e3d819e65b3bccc425e6ae5b6af3e3e9108bb5e4"
-          private_key: "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDl40uC9/Ey+lAA\nTH2Sf/7Uln6OFjjqn0t0wCh5noCqQrNDA1P+hAnuPpqViYPzfol3yBvXNz3IYT7L\nMNynspTg3cPNr1W8xPVvtZ3VcVA8YlTyJYxhO1Jf0pVMqCmgP1ieuguYmEAprJcr\nfMxZTJym1R9ybxQp7i3We3nD9gEsaVF7VNJTO6zAxBgTxr76ONdm9wFTTmsTlGdZ\n8C6aVvK261hQa7VNOFx6D0T3I6VwFKENy9xsJGBQoJGSlyEJBODh1hbgKvqg/7si\nlIMG2AhPKbWA2jBf4w2Zr9k3AFwnWe1NLRqTxl7iOOGQsqMVoucN2Y05Tprw99vT\npquvTCtXAgMBAAECggEAFMrPkBtr0eAI71X7v43bFxA7hw9ke3gH45njr0hSO9QH\nkaaR6MG5gjZgVekXqaTGuzI6rmb9LAv7mXYkZviEdagpJwfWOdoYls925JC4oJWG\nOFaEEWFDrI4H2eSVyzwfgE+0b8tJdlt5WsIRW3xN6Nr62qdITBiSRcVqOHqeFY2P\nF2g0LxMvS7AcxdWNpFhHHq4nh2Et83BUpjSo6pA9yynAVMkjCyeTe3LsJl35T6sO\nYXFCLEK8aLrYazd76SntzJ1GOMit3lxs2siYNOtqno7+5+CS2XEUfoMlYO888Oki\nKb8vrzMTMWL1Az3WhqdD1ApXYzOP27RJbpPTYigvlQKBgQD9mGj3xFWIik7i4ncn\nS+iTXtlJm5ywF5IvveZO0MPWVXM2pZ1c1cyk/AxK+cBDUoDgGhILw7ypI/OaPWab\nm6ebHuRfizXDiL9Ra6b7PaAsDX4LnZGngGsz8hZaj4j2gKpedITS75boOeV8N/e6\nxGd5pWBi4iWt5jEkor5xjwchjQKBgQDoEVYSbp8JgZEQ6qPw05Et/Fthv9OIYknc\n+hF4V1sUdbN+kGtSV7yf43y4gORWJWvuiaCQ/0LeTgcdo2h87yyk0U0cMjeL1DIF\nmDOPn8YDhBbsgvlLpwufXibE5ZaKl6yuyhZ07fCxkX6AnJBrhkFNQzzKe0+TvQJP\nVBg7mF+9cwKBgQCRoekGAJYuJ19OJEfRJWKW3y1hfB/rcF3fVOrh8DnG6KOVil5o\nZc90H9rfY7Xp84NXLyGV5/58E81dkk1Op4EFMCRuSf/CHtHf7DakqatGISl1ejOf\nQbxOxIPZ1fwNs64jOD7e9ABxtG35fBqkAw55aWOE5eJFj6BBLcS4ai7qMQKBgGLs\n6PUIhPEHc3BzpZkGhw/EUKwVmrW7uGLjksjq7B+HoRFlvOooDndWARehkjSK1Tyl\nHHZS6g1b07q1qtf/GNfVhPptCbKorP4niGtEH6PmDeOaXWz7c3/nIb2zZP4FdA46\nhWIo//6h1/w5QXMkkve9ns9ty1leK/rnDUFyTfWzAoGAX5yN9Qy9S/9bUEhZM+EK\nDMUKc0M0hs+ZnM1IPnYBrj8PSS6Cdsm1CEsnvB1vKBXt6tTLuirzzC3i19FnLyRs\nX0iEPuvF18vmfTQbH422S3HJigk5iHXAv+gO/eo4AF4KMi5B/qjV1UBN7gPPACGv\nnlSEFKyjp/eZRqJ/cegfzhM=\n-----END PRIVATE KEY-----\n"
-          client_email: "firebase-adminsdk-v9zxg@leef-46909.iam.gserviceaccount.com"
-          client_id: "101740532640762789723"
-          auth_uri: "https://accounts.google.com/o/oauth2/auth"
-          token_uri: "https://oauth2.googleapis.com/token"
-          auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs"
-          client_x509_cert_url: "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-v9zxg%40leef-46909.iam.gserviceaccount.com"
-          database_default_url: "https://leef-46909-default-rtdb.firebaseio.com/"
+          project_id: ${{secrets.FIREBASE_PROJECT_ID}}
+          private_key_id: ${{secrets.FIREBASE_PRIVATE_KEY_ID}}
+          private_key: ${{secrets.FIREBASE_PRIVATE_KEY}}
+          client_email: ${{secrets.FIREBASE_CLIENT_EMAIL}}
+          client_id: ${{secrets.FIREBASE_CLIENT_ID}}
+          auth_uri: ${{secrets.FIREBASE_AUTH_URI}}
+          token_uri: ${{secrets.FIREBASE_TOKEN_URI}}
+          auth_provider_x509_cert_url: ${{secrets.FIREBASE_AUTH_PROVIDER_X509_CERT_URL}}
+          client_x509_cert_url: ${{secrets.FIREBASE_CLIENT_X509_CERT_URL}}
+          database_default_url: ${{secrets.FIREBASE_REALTIME_DATABASE_URL}}
           reference: 'firmware'
           operation: set
-          data: "{ \"name\": \"Hanno\", \"age\": 29 }"
+          data: "{ \"name\": \"Hanno\", \"age\": 50 }"
