@@ -1,5 +1,6 @@
-esp32/.pio
-esp32/.vscode/.browse.c_cpp.db*
-esp32/.vscode/c_cpp_properties.json
-esp32/.vscode/launch.json
-esp32/.vscode/ipch
+board/.pio
+board/.vscode/.browse.c_cpp.db*
+board/.vscode/c_cpp_properties.json
+board/.vscode/launch.json
+board/.vscode/ipch
+board/platformio.ini
