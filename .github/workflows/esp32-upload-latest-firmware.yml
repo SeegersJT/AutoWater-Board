@@ -40,7 +40,7 @@ jobs:
         const fs = require('fs');
         const path = process.env.latest_file;
         const filename = path.split('/').pop();
-        
+
         const serviceAccount = require('./firebase-service-account.json');
         admin.initializeApp({
           credential: admin.credential.cert(serviceAccount),
@@ -52,8 +52,10 @@ jobs:
           destination: \`firmware/\${filename}\`
         }).then(() => {
           console.log('File uploaded successfully');
+          process.exit(0); // Ensure process exits after successful upload
         }).catch(err => {
           console.error('ERROR:', err);
+          process.exit(1); // Ensure process exits with error code on failure
         });
         "
 
@@ -85,8 +87,10 @@ jobs:
         }, (error) => {
           if (error) {
             console.error('Error updating database:', error);
+            process.exit(1); // Ensure process exits with error code on failure
           } else {
             console.log('Database updated successfully');
+            process.exit(0); // Ensure process exits after successful update
           }
         });
         "
