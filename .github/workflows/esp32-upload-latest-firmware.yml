@@ -25,26 +25,22 @@ jobs:
       id: get_latest_firmware
       run: |
         latest_file=$(ls -t esp/firmware/* | head -n 1)
-        echo "::set-output name=latest_file::$latest_file"
-
-
-        leef-46909.appspot.com
+        echo "latest_file=$latest_file" >> $GITHUB_ENV
 
     - name: Upload to Firebase Storage
       env:
-        FIREBASE_TOKEN: "yyum6rEl2HQQqcy8ePZUQbBHmYPR7sHsrDXHkbCI"
-        STORAGE_URL: "gs://leef-46909.appspot.com"
+        FIREBASE_TOKEN: yyum6rEl2HQQqcy8ePZUQbBHmYPR7sHsrDXHkbCI
+        STORAGE_URL: leef-46909.appspot.com
       run: |
-        latest_file="${{ steps.get_latest_firmware.outputs.latest_file }}"
-        firebase deploy --only hosting:esp --project YOUR_FIREBASE_PROJECT
+        latest_file="${{ env.latest_file }}"
         gsutil cp "$latest_file" "gs://leef-46909.appspot.com/firmware/$(basename $latest_file)"
 
     - name: Update Firebase Realtime Database
       env:
-        FIREBASE_TOKEN: "yyum6rEl2HQQqcy8ePZUQbBHmYPR7sHsrDXHkbCI"
-        DATABASE_URL: "https://leef-46909-default-rtdb.firebaseio.com/"
+        FIREBASE_TOKEN: yyum6rEl2HQQqcy8ePZUQbBHmYPR7sHsrDXHkbCI
+        DATABASE_URL: https://leef-46909-default-rtdb.firebaseio.com/
       run: |
-        latest_file="${{ steps.get_latest_firmware.outputs.latest_file }}"
+        latest_file="${{ env.latest_file }}"
         filename=$(basename "$latest_file")
         upload_date=$(date +"%Y-%m-%d %H:%M:%S")
         file_url="https://storage.googleapis.com/leef-46909.appspot.com/firmware/$filename"
