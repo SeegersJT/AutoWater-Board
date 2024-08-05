@@ -18,8 +18,10 @@ jobs:
       with:
         node-version: '14'
 
-    - name: Install Firebase CLI
-      run: npm install -g firebase-tools
+    - name: Install Dependencies
+      run: |
+        npm install -g firebase-tools
+        npm install firebase-admin
 
     - name: Get Latest Firmware
       id: get_latest_firmware
@@ -29,19 +31,53 @@ jobs:
 
     - name: Upload to Firebase Storage
       env:
-        FIREBASE_TOKEN: yyum6rEl2HQQqcy8ePZUQbBHmYPR7sHsrDXHkbCI
-        STORAGE_URL: leef-46909.appspot.com
+        FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
       run: |
-        latest_file="${{ env.latest_file }}"
-        gsutil cp "$latest_file" "gs://leef-46909.appspot.com/firmware/$(basename $latest_file)"
+        echo "${FIREBASE_SERVICE_ACCOUNT}" > firebase-service-account.json
+        node <<EOF
+        const admin = require('firebase-admin');
+        const serviceAccount = require('./firebase-service-account.json');
+        admin.initializeApp({
+          credential: admin.credential.cert(serviceAccount),
+          storageBucket: process.env.STORAGE_URL
+        });
+        const { Storage } = require('@google-cloud/storage');
+        const storage = new Storage();
+        const bucket = storage.bucket(process.env.STORAGE_URL);
+        const path = '${{ env.latest_file }}';
+        const destFileName = 'firmware/' + path.split('/').pop();
+        bucket.upload(path, { destination: destFileName })
+          .then(() => console.log('File uploaded successfully'))
+          .catch(err => console.error('ERROR:', err));
+        EOF
 
     - name: Update Firebase Realtime Database
       env:
-        FIREBASE_TOKEN: yyum6rEl2HQQqcy8ePZUQbBHmYPR7sHsrDXHkbCI
-        DATABASE_URL: https://leef-46909-default-rtdb.firebaseio.com/
+        FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
       run: |
-        latest_file="${{ env.latest_file }}"
-        filename=$(basename "$latest_file")
-        upload_date=$(date +"%Y-%m-%d %H:%M:%S")
-        file_url="https://storage.googleapis.com/leef-46909.appspot.com/firmware/$filename"
-        firebase database:update --data "{ \"dateUploaded\": \"$upload_date\", \"filename\": \"$filename\", \"url\": \"$file_url\" }" "https://leef-46909-default-rtdb.firebaseio.com/firmware/$filename.json"
+        echo "${FIREBASE_SERVICE_ACCOUNT}" > firebase-service-account.json
+        node <<EOF
+        const admin = require('firebase-admin');
+        const serviceAccount = require('./firebase-service-account.json');
+        admin.initializeApp({
+          credential: admin.credential.cert(serviceAccount),
+          databaseURL: process.env.REALTIME_DATABASE_URL
+        });
+        const db = admin.database();
+        const ref = db.ref('firmware');
+        const path = '${{ env.latest_file }}';
+        const filename = path.split('/').pop();
+        const uploadDate = new Date().toISOString();
+        const fileUrl = `https://storage.googleapis.com/${process.env.STORAGE_URL}/firmware/${filename}`;
+        ref.child(filename.replace(/\./g, '_')).set({
+          dateUploaded: uploadDate,
+          filename: filename,
+          url: fileUrl
+        }, (error) => {
+          if (error) {
+            console.error('Error updating database:', error);
+          } else {
+            console.log('Database updated successfully');
+          }
+        });
+        EOF
