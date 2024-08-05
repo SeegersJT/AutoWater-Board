@@ -12,4 +12,4 @@ Information here
 
 #### Proto Board Wiring Diagram
 
-![Proto Board Wiring Diagram](https://raw.githubusercontent.com/SeegersJT/L.E.E.F/master/images/L.E.E.F.%20Proto%20Board%20Wiring%20Diagram%20v1.1.jpg)
+![Proto Board Wiring Diagram](https://raw.githubusercontent.com/SeegersJT/L.E.E.F/master/docs/images/L.E.E.F.%20Proto%20Board%20Wiring%20Diagram%20v1.1.jpg)
