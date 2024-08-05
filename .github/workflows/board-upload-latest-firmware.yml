@@ -26,8 +26,13 @@ jobs:
     - name: Get Latest Firmware
       id: get_latest_firmware
       run: |
-        latest_file=$(ls -t board/firmware/* | head -n 1)
-        echo "latest_file=$latest_file" >> $GITHUB_ENV
+        firmware_file="board/firmware/LEEF_Firmware.bin"
+        if [ -f "$firmware_file" ]; then
+          echo "firmware_file=$firmware_file" >> $GITHUB_ENV
+        else
+          echo "File not found: $firmware_file"
+          exit 1
+        fi
 
     - name: Upload to Firebase Storage
       env:
