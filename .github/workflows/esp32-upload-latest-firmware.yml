@@ -48,6 +48,9 @@ jobs:
         });
 
         const bucket = admin.storage().bucket();
+        console.log('path', path);
+        console.log('filename', filename);
+        console.log('bucket', bucket);
         bucket.upload(path, {
           destination: `firmware/${filename}`
         }).then(() => {
