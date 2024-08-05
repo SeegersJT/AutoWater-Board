@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: test secrets
-        run: echo "The object result is ${secrets.FIREBASE_PROJECT_ID}"
+        run: echo "The object result is ${{secrets.FIREBASE_PROJECT_ID}}"
       - name: test get
         uses: rafacolab/realtime-db-action@v1.0.0
         id: testGet
