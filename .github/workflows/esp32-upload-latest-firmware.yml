@@ -40,7 +40,7 @@ jobs:
         const fs = require('fs');
         const path = process.env.latest_file;
         const filename = path.split('/').pop();
-
+        
         const serviceAccount = require('./firebase-service-account.json');
         admin.initializeApp({
           credential: admin.credential.cert(serviceAccount),
@@ -75,8 +75,10 @@ jobs:
         const path = process.env.latest_file;
         const filename = path.split('/').pop();
         const uploadDate = new Date().toISOString();
+        const formattedDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+        const objectName = \`__ LEEF FIRMWARE __ \${formattedDate} __\`;
         const fileUrl = \`https://firebasestorage.googleapis.com/v0/b/\${process.env.FIREBASE_STORAGE_URL}/o/firmware%2F\${filename}?alt=media\`;
-        ref.child(filename.replace(/\\./g, '_')).set({
+        ref.child(objectName.replace(/\\./g, '_')).set({
           dateUploaded: uploadDate,
           filename: filename,
           url: fileUrl
