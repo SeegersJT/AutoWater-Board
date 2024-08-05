@@ -32,28 +32,35 @@ jobs:
     - name: Upload to Firebase Storage
       env:
         FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        FIREBASE_STORAGE_URL: ${{ secrets.FIREBASE_STORAGE_URL }}
       run: |
         echo "${FIREBASE_SERVICE_ACCOUNT}" > firebase-service-account.json
         node <<EOF
         const admin = require('firebase-admin');
+        const fs = require('fs');
+        const path = process.env.latest_file;
+        const filename = path.split('/').pop();
+
         const serviceAccount = require('./firebase-service-account.json');
         admin.initializeApp({
           credential: admin.credential.cert(serviceAccount),
-          storageBucket: process.env.STORAGE_URL
+          storageBucket: process.env.FIREBASE_STORAGE_URL
         });
-        const { Storage } = require('@google-cloud/storage');
-        const storage = new Storage();
-        const bucket = storage.bucket(process.env.STORAGE_URL);
-        const path = '${{ env.latest_file }}';
-        const destFileName = 'firmware/' + path.split('/').pop();
-        bucket.upload(path, { destination: destFileName })
-          .then(() => console.log('File uploaded successfully'))
-          .catch(err => console.error('ERROR:', err));
+
+        const bucket = admin.storage().bucket();
+        bucket.upload(path, {
+          destination: `firmware/${filename}`
+        }).then(() => {
+          console.log('File uploaded successfully');
+        }).catch(err => {
+          console.error('ERROR:', err);
+        });
         EOF
 
     - name: Update Firebase Realtime Database
       env:
         FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        FIREBASE_REALTIME_DATABASE_URL: ${{ secrets.FIREBASE_REALTIME_DATABASE_URL }}
       run: |
         echo "${FIREBASE_SERVICE_ACCOUNT}" > firebase-service-account.json
         node <<EOF
@@ -61,14 +68,14 @@ jobs:
         const serviceAccount = require('./firebase-service-account.json');
         admin.initializeApp({
           credential: admin.credential.cert(serviceAccount),
-          databaseURL: process.env.REALTIME_DATABASE_URL
+          databaseURL: process.env.FIREBASE_REALTIME_DATABASE_URL
         });
         const db = admin.database();
         const ref = db.ref('firmware');
-        const path = '${{ env.latest_file }}';
+        const path = process.env.latest_file;
         const filename = path.split('/').pop();
         const uploadDate = new Date().toISOString();
-        const fileUrl = `https://storage.googleapis.com/${process.env.STORAGE_URL}/firmware/${filename}`;
+        const fileUrl = `https://firebasestorage.googleapis.com/v0/b/${process.env.FIREBASE_STORAGE_URL}/o/firmware%2F${filename}?alt=media`;
         ref.child(filename.replace(/\./g, '_')).set({
           dateUploaded: uploadDate,
           filename: filename,
