@@ -43,7 +43,7 @@ jobs:
         node -e "
         const admin = require('firebase-admin');
         const fs = require('fs');
-        const path = process.env.latest_file;
+        const path = process.env.firmware_file;
         const filename = path.split('/').pop();
 
         const serviceAccount = require('./firebase-service-account.json');
@@ -80,7 +80,7 @@ jobs:
         });
         const db = admin.database();
         const ref = db.ref('firmware');
-        const path = process.env.latest_file;
+        const path = process.env.firmware_file;
         const filename = path.split('/').pop();
         const uploadDate = new Date().toISOString();
         const formattedDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
